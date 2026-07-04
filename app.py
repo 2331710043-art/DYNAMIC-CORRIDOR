@@ -578,36 +578,6 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
 
 # --------------------------------------------------------------------------- #
-# HANG DOI THOI GIAN THUC (cards)
-# --------------------------------------------------------------------------- #
-st.markdown('<div class="rf-section-title">Hàng đợi thời gian thực</div>', unsafe_allow_html=True)
-qc1, qc2 = st.columns(2)
-with qc1:
-    with st.container(border=True):
-        st.markdown(
-            f"""<div class="rf-rwy-head"><span class="rf-rwy-name">🛬 Arrival</span>
-                <span class="rf-badge rf-badge-active">{int(last_lq_arr)}</span></div>""",
-            unsafe_allow_html=True,
-        )
-        if last_lq_arr == 0:
-            st.caption("Hàng đợi trống")
-        else:
-            st.caption(f"{int(last_lq_arr)} tàu bay đang chờ hạ cánh")
-with qc2:
-    with st.container(border=True):
-        st.markdown(
-            f"""<div class="rf-rwy-head"><span class="rf-rwy-name">🛫 Departure</span>
-                <span class="rf-badge rf-badge-warn">{int(last_lq_dep)}</span></div>""",
-            unsafe_allow_html=True,
-        )
-        if last_lq_dep == 0:
-            st.caption("Hàng đợi trống")
-        else:
-            st.caption(f"{int(last_lq_dep)} tàu bay đang chờ cất cánh")
-
-st.divider()
-
-# --------------------------------------------------------------------------- #
 # DIEN BIEN THEO THOI GIAN - tabs (thay cho 3 bieu do roi rac)
 # --------------------------------------------------------------------------- #
 st.markdown('<div class="rf-section-title">Diễn biến theo thời gian</div>', unsafe_allow_html=True)
