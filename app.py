@@ -221,7 +221,7 @@ with st.sidebar.form("sim_form"):
 
     st.markdown("---")
     compare_policy = st.checkbox(
-        "So sanh FCFS (luan phien co dinh) vs Hanh lang dong",
+        "So sanh MCBS (luan phien co dinh) vs Hanh lang dong",
         value=True, disabled=(runway_mode != "mixed"),
         help="Chi co y nghia khi Runway mode = Mixed.",
     )
@@ -263,7 +263,7 @@ with st.expander("Giả thiết mô hình (tóm tắt)", expanded=False):
 # --------------------------------------------------------------------------- #
 if "result_dynamic" not in st.session_state:
     st.session_state.result_dynamic = None
-    st.session_state.result_fcfs = None
+    st.session_state.result_MCBS = None
     st.session_state.cfg_used = None
 
 if submitted:
@@ -285,13 +285,13 @@ if submitted:
     st.session_state.cfg_used = cfg_dyn
 
     if compare_policy and runway_mode == "mixed":
-        cfg_fcfs = SimConfig(policy="fcfs", **base_kwargs)
-        st.session_state.result_fcfs = run_simulation(cfg_fcfs)
+        cfg_MCBS = SimConfig(policy="MCBS", **base_kwargs)
+        st.session_state.result_MCBS = run_simulation(cfg_MCBS)
     else:
-        st.session_state.result_fcfs = None
+        st.session_state.result_MCBS = None
 
 result = st.session_state.result_dynamic
-result_fcfs = st.session_state.result_fcfs
+result_MCBS = st.session_state.result_MCBS
 cfg_used = st.session_state.cfg_used
 
 if result is None:
@@ -758,42 +758,42 @@ st.markdown(
 st.divider()
 
 # --------------------------------------------------------------------------- #
-# So sanh FCFS vs Hanh lang dong
+# So sanh MCBS vs Hanh lang dong
 # --------------------------------------------------------------------------- #
-if result_fcfs is not None:
-    st.markdown('<div class="rf-section-title">So sánh: FCFS (luân phiên cố định) vs Hành lang động</div>',
+if result_MCBS is not None:
+    st.markdown('<div class="rf-section-title">So sánh: MCBS (luân phiên cố định) vs Hành lang động</div>',
                 unsafe_allow_html=True)
-    sf = result_fcfs.summary
+    sf = result_MCBS.summary
     compare_df = pd.DataFrame({
         "Chỉ số": ["Lq trung bình (tàu bay)", "Wq trung bình (phút)", "Hệ số sử dụng \u03c1",
                    "Throughput (chuyến/giờ)", "Số chuyến đã phục vụ"],
-        "FCFS (cố định 1:1)": [sf["avg_lq_total"], sf["wq_total_min"], sf["avg_utilization"],
+        "MCBS (cố định 1:1)": [sf["avg_lq_total"], sf["wq_total_min"], sf["avg_utilization"],
                                 sf["throughput_per_h"], sf["cum_served"]],
         "Hành lang động": [s["avg_lq_total"], s["wq_total_min"], s["avg_utilization"],
                            s["throughput_per_h"], s["cum_served"]],
     })
     compare_df["Cải thiện (%)"] = np.where(
-        compare_df["FCFS (cố định 1:1)"] != 0,
-        (compare_df["FCFS (cố định 1:1)"] - compare_df["Hành lang động"]) / compare_df["FCFS (cố định 1:1)"] * 100,
+        compare_df["MCBS (cố định 1:1)"] != 0,
+        (compare_df["MCBS (cố định 1:1)"] - compare_df["Hành lang động"]) / compare_df["MCBS (cố định 1:1)"] * 100,
         0.0,
     )
 
     col_i, col_j = st.columns([1, 1])
     with col_i:
         st.dataframe(compare_df.style.format({
-            "FCFS (cố định 1:1)": "{:.2f}", "Hành lang động": "{:.2f}", "Cải thiện (%)": "{:+.1f}%"
+            "MCBS (cố định 1:1)": "{:.2f}", "Hành lang động": "{:.2f}", "Cải thiện (%)": "{:+.1f}%"
         }), use_container_width=True, hide_index=True)
     with col_j:
         fig_cmp = go.Figure()
         metrics_for_bar = ["Lq trung bình (tàu bay)", "Wq trung bình (phút)"]
         sub = compare_df[compare_df["Chỉ số"].isin(metrics_for_bar)]
-        fig_cmp.add_trace(go.Bar(name="FCFS", x=sub["Chỉ số"], y=sub["FCFS (cố định 1:1)"], marker_color="#fb923c"))
+        fig_cmp.add_trace(go.Bar(name="MCBS", x=sub["Chỉ số"], y=sub["MCBS (cố định 1:1)"], marker_color="#fb923c"))
         fig_cmp.add_trace(go.Bar(name="Hành lang động", x=sub["Chỉ số"], y=sub["Hành lang động"], marker_color="#22d3ee"))
         fig_cmp.update_layout(barmode="group", height=340, legend=dict(orientation="h", y=1.15), **PLOTLY_DARK)
         st.plotly_chart(fig_cmp, use_container_width=True)
 
     st.caption(
-        "Giá trị Cải thiện (%) dương nghĩa là Hành lang động giúp giảm chỉ số đó so với FCFS "
+        "Giá trị Cải thiện (%) dương nghĩa là Hành lang động giúp giảm chỉ số đó so với MCBS "
         "(ví dụ Wq giảm = giảm thời gian chờ trung bình)."
     )
     st.divider()
