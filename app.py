@@ -467,6 +467,7 @@ components.html(
                    transition-property:left,opacity; transition-timing-function:linear;
                    filter:drop-shadow(0 0 2px rgba(0,0,0,.6)); }}
       .rf-plane-arr {{ transform:scaleX(-1); }}
+      .rf-plane-dep {{ transform:scaleX(-1); }}
     </style>
 
     <script>
@@ -542,7 +543,7 @@ components.html(
         hdrLQueue.textContent = 'Hàng đợi hiện tại: ' + f.qd + ' tàu';
 
         if (rActive) {{ spawnPlane(trackR, '✈️', 'rf-plane-arr'); }}
-        if (lActive) {{ spawnPlane(trackL, '🛫', ''); }}
+        if (lActive) {{ spawnPlane(trackL, '🛫', 'rf-plane-dep'); }}
       }}
 
       function tick() {{
@@ -573,6 +574,36 @@ components.html(
     height=430,
 )
 st.markdown('</div>', unsafe_allow_html=True)
+
+st.divider()
+
+# --------------------------------------------------------------------------- #
+# HANG DOI THOI GIAN THUC (cards)
+# --------------------------------------------------------------------------- #
+st.markdown('<div class="rf-section-title">Hàng đợi thời gian thực</div>', unsafe_allow_html=True)
+qc1, qc2 = st.columns(2)
+with qc1:
+    with st.container(border=True):
+        st.markdown(
+            f"""<div class="rf-rwy-head"><span class="rf-rwy-name">🛬 Arrival</span>
+                <span class="rf-badge rf-badge-active">{int(last_lq_arr)}</span></div>""",
+            unsafe_allow_html=True,
+        )
+        if last_lq_arr == 0:
+            st.caption("Hàng đợi trống")
+        else:
+            st.caption(f"{int(last_lq_arr)} tàu bay đang chờ hạ cánh")
+with qc2:
+    with st.container(border=True):
+        st.markdown(
+            f"""<div class="rf-rwy-head"><span class="rf-rwy-name">🛫 Departure</span>
+                <span class="rf-badge rf-badge-warn">{int(last_lq_dep)}</span></div>""",
+            unsafe_allow_html=True,
+        )
+        if last_lq_dep == 0:
+            st.caption("Hàng đợi trống")
+        else:
+            st.caption(f"{int(last_lq_dep)} tàu bay đang chờ cất cánh")
 
 st.divider()
 
